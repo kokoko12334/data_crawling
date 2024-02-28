@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"runtime"
 	mysqlconnect "sql/src/mysql_connect"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -27,7 +28,15 @@ func main() {
 		defer wait.Done()
 		// maeil.Request(1, 1, ch_url)
 		// hankyung.Request(1, 1, ch_url)
-		naver.Request(1, 10, 20240227, ch_url)
+		current_time := time.Now()
+		date_string := current_time.Format("20060102")
+		date_int, err := strconv.Atoi(date_string)
+		if err != nil {
+			fmt.Println("날짜를 정수로 변환하는 데 문제가 발생했습니다:", err)
+			return
+		}
+
+		naver.Request(1, 1, date_int, ch_url)
 		close(ch_url)
 
 	}()
