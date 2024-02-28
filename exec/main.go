@@ -3,10 +3,11 @@ package main
 import (
 	"crawling/src/naver"
 	"crawling/src/text_extractor"
-	"fmt"
+	"log"
 	"math/rand"
+	"os"
 	"runtime"
-	mysqlconnect "sql/src/mysql_connect"
+	mysql "sql/src/mysql_connect"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,6 +15,16 @@ import (
 )
 
 func main() {
+
+	log_file, err := os.OpenFile("logfile.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+
+	if err != nil {
+		log.Fatal("파일을 만들 수 없습니다: ", err)
+	}
+
+	defer log_file.Close()
+
+	log.SetOutput(log_file)
 
 	ch_url := make(chan string, 100)
 	ch_news := make(chan []string, 100)
@@ -26,16 +37,17 @@ func main() {
 
 	go func() {
 		defer wait.Done()
-		// maeil.Request(1, 1, ch_url)
-		// hankyung.Request(1, 1, ch_url)
+
 		current_time := time.Now()
 		date_string := current_time.Format("20060102")
 		date_int, err := strconv.Atoi(date_string)
 		if err != nil {
-			fmt.Println("날짜를 정수로 변환하는 데 문제가 발생했습니다:", err)
+			log.Println("날짜를 정수로 변환하는 데 문제가 발생했습니다:", err)
 			return
 		}
-
+		// maeil.Request(1, 1, ch_url)
+		// hankyung.Request(1, 1, ch_url)
+		log.Printf("뉴스날짜: %d", date_int)
 		naver.Request(1, 1, date_int, ch_url)
 		close(ch_url)
 
@@ -46,7 +58,7 @@ func main() {
 		for url := range ch_url {
 			url_split := strings.Split(url, " ")
 			f_url, source := url_split[0], url_split[1]
-			fmt.Println(f_url, source)
+			log.Println(f_url, source)
 			ch_news <- []string{f_url, text_extractor.Extractor(f_url), source}
 
 			rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -56,7 +68,7 @@ func main() {
 			randomFloatWithOneDecimal := float64(int(randomFloat*10)) / 10
 			// Sleep에 사용할 시간 계산 (초 단위)
 			sleepTime := time.Duration(randomFloatWithOneDecimal * float64(time.Second))
-			fmt.Printf("Sleeping for %.1f seconds\n", randomFloatWithOneDecimal)
+			log.Printf("Sleeping for %.1f seconds\n", randomFloatWithOneDecimal)
 			time.Sleep(sleepTime)
 
 		}
@@ -67,12 +79,16 @@ func main() {
 	go func() {
 		defer wait.Done()
 
+		db := mysql.Mysql_connect()
+		defer db.Close()
+
 		for url_news := range ch_news {
-			mysqlconnect.Raw_news_insert(url_news[0], url_news[1], url_news[2])
+			mysql.Raw_news_insert(db, url_news[0], url_news[1], url_news[2])
 
 		}
 
 	}()
 
 	wait.Wait()
+
 }

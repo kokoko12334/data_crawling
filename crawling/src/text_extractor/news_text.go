@@ -1,7 +1,6 @@
 package text_extractor
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -39,7 +38,7 @@ func Extractor(url_ string) string {
 	req, err := http.NewRequest("GET", url_, nil)
 
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		log.Println("Error creating request:", err)
 		log.Fatal(err)
 	}
 
@@ -47,14 +46,15 @@ func Extractor(url_ string) string {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Println("Error sending HTTP request:", err)
+		log.Println("Error sending HTTP request:", err)
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		fmt.Println("Error parsing document:", err)
+		log.Println("Error parsing document:", err)
+		log.Fatal(err)
 
 	}
 	// fmt.Println(doc.Text())
@@ -73,7 +73,7 @@ func Extractor(url_ string) string {
 	htmlString := doc_content.Text()
 	// fmt.Println(htmlString)
 	if err != nil {
-		fmt.Println("Error getting HTML:", err)
+		log.Println("Error getting HTML:", err)
 		return ""
 	}
 	result1 := strings.Replace(htmlString, "\t", "", -1)

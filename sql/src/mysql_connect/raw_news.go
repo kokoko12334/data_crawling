@@ -31,11 +31,11 @@ func raw_news_insert_run(db *sql.DB, params ...interface{}) {
 	checkError(err)
 	rows, err := result.RowsAffected()
 	checkError(err)
-	log.Println(rows)
+	log.Printf("inser성공:%d", rows)
 
 }
 
-func Raw_news_insert(params ...interface{}) {
+func Raw_news_insert(db *sql.DB, params ...interface{}) {
+	raw_news_insert_run(db, params...)
 
-	Mysql_connect(raw_news_insert_run, params...)
 }

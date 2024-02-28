@@ -20,7 +20,7 @@ func Request(from_page int, to_page int, date int, ch chan<- string) {
 		req, err := http.NewRequest("GET", url, nil)
 
 		if err != nil {
-			fmt.Println("Error creating request:", err)
+			log.Println("Error creating request:", err)
 			log.Fatal(err)
 		}
 
@@ -28,21 +28,21 @@ func Request(from_page int, to_page int, date int, ch chan<- string) {
 		resp, err := client.Do(req)
 
 		if err != nil {
-			fmt.Println("Error sending HTTP request:", err)
+			log.Println("Error sending HTTP request:", err)
 			log.Fatal(err)
 		}
 		defer resp.Body.Close()
 
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
-			fmt.Println("Error parsing document:", err)
+			log.Println("Error parsing document:", err)
 
 		}
 
 		first_doc := doc.Find("ul.realtimeNewsList")
 
 		if text := strings.TrimSpace(first_doc.Text()); text == "" {
-			fmt.Println("end")
+			log.Println("end")
 			break
 		}
 
@@ -54,7 +54,7 @@ func Request(from_page int, to_page int, date int, ch chan<- string) {
 			article_id := strings.Split(sub_url2[0], "=")[1]
 			final_url := fmt.Sprintf("https://n.news.naver.com/mnews/article/%s/%s", office_id, article_id)
 			if len(final_url) == 0 {
-				fmt.Println("end")
+				log.Println("end")
 			}
 			if is {
 				ch <- final_url + " " + "naver"
