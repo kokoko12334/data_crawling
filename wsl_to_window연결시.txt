@@ -1,0 +1,7 @@
+hostname -f로 wsl호스트 네임 확인
+
+=> aaa라면
+
+window의 로컬호스트로 접근하려면
+
+=> aaa.local로 명시

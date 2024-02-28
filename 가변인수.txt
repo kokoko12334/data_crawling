@@ -1,0 +1,9 @@
+func Raw_news_insert(params ...interface{}) {
+
+	Mysql_connect(raw_news_insert_run, params...)
+}
+
+
+에서 params ...interface{} => 가변인수이면서 데이터타입 안정함
+
+=> 해당 인수를 받고 처리할때에도 params가 아닌 params ...도 가변 인수로 써줘야함.
