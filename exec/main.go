@@ -15,8 +15,9 @@ import (
 )
 
 func main() {
-
-	log_file, err := os.OpenFile("logfile.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	gopath := os.Getenv("GOPATH")
+	log_path := gopath + "/exec/logfile.log"
+	log_file, err := os.OpenFile(log_path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 
 	if err != nil {
 		log.Fatal("파일을 만들 수 없습니다: ", err)
@@ -39,7 +40,8 @@ func main() {
 		defer wait.Done()
 
 		current_time := time.Now()
-		date_string := current_time.Format("20060102")
+		yesterday := current_time.AddDate(0, 0, -1)
+		date_string := yesterday.Format("20060102")
 		date_int, err := strconv.Atoi(date_string)
 		if err != nil {
 			log.Println("날짜를 정수로 변환하는 데 문제가 발생했습니다:", err)
