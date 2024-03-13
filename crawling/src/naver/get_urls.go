@@ -9,13 +9,13 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func Request(from_page int, to_page int, date int, ch chan<- string) {
+func Request(from_page int, to_page int, date int, section_id3 int, ch chan<- string) {
 
 	client := &http.Client{}
 
 	for page := from_page; page <= to_page; page++ {
 
-		url := fmt.Sprintf("https://finance.naver.com/news/news_list.naver?mode=LSS3D&section_id=101&section_id2=258&section_id3=402&date=%d&page=%d", date, page)
+		url := fmt.Sprintf("https://finance.naver.com/news/news_list.naver?mode=LSS3D&section_id=101&section_id2=258&section_id3=%d&date=%d&page=%d", section_id3, date, page)
 
 		req, err := http.NewRequest("GET", url, nil)
 

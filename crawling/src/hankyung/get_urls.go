@@ -1,4 +1,4 @@
-package maeil
+package hankyung
 
 import (
 	"fmt"
