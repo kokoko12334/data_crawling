@@ -50,7 +50,7 @@ func main() {
 		// maeil.Request(1, 1, ch_url)
 		// hankyung.Request(1, 1, ch_url)
 		log.Printf("뉴스날짜: %d", date_int)
-		naver.Request(1, 20, date_int, 401, ch_url)
+		// naver.Request(1, 20, date_int, 401, ch_url)
 		naver.Request(1, 20, date_int, 402, ch_url)
 		close(ch_url)
 
